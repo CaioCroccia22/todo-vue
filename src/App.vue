@@ -30,6 +30,15 @@ import { reactive } from "vue";
     return estado.tarefas.filter(tarefa => tarefa.finalizada)
   }
 
+  const cadastraTarefa = () => {
+  const item = {
+    titulo: estado.tarefaTemp,
+    finalizada: false
+  }
+  estado.tarefas.push(item)
+  estado.tarefaTemp = ''
+}
+
 
   const getTarefasFiltradas = () => {
     const { filtro } = estado;
@@ -44,13 +53,6 @@ import { reactive } from "vue";
     }
   }
 
-const cadastraTarefa = () => {
-  const item = {
-    titulo: 'Teste2',
-    finalizada: false
-  }
-  return estado.tarefas.push(item)
-}
 
 </script>
 
@@ -62,10 +64,10 @@ const cadastraTarefa = () => {
       Você possui {{ getTarefasPendentes().length }} tarefas pendentes
     </p>
   </header>
-  <form @submit="cadastraTarefa">
+  <form @submit.prevent="cadastraTarefa">
     <div class="row">
       <div class="col">
-        <Input required @change="evento => estado.tarefaTemp = evento.target.value" type="text" placeholder="Digite a descrição da tarefa" class="form-control"></Input>
+        <input required v-model="estado.tarefaTemp" type="text" placeholder="Digite a descrição da tarefa" class="form-control"></input>
       </div>
       <div class="col-md-1">
         <button type="submit" class="btn btn-primary">
