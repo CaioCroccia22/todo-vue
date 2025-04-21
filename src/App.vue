@@ -1,5 +1,10 @@
 <script setup>
-import { reactive } from "vue";
+  import { reactive } from "vue";
+  import Cabecalho from "./components/cabecalho.vue"
+  import Formulario from "./components/formulario.vue"
+  import List from "./components/list.vue"
+
+  
 
   const estado = reactive({
     filtro: 'todas',
@@ -10,7 +15,7 @@ import { reactive } from "vue";
         finalizada: true
       },
       {
-        titulo: 'Estudar SASS',
+        titulo: 'Estudar SASS teste',
         finalizada: false
       },
       {
@@ -22,7 +27,9 @@ import { reactive } from "vue";
 
   const getTarefasPendentes = () => {
     //Filtra as tarefas com o valor finaliza === false (!tarefa)
+    console.log(estado.tarefas.filter(tarefa => !tarefa.finalizada))
     return estado.tarefas.filter(tarefa => !tarefa.finalizada)
+
   }
 
   const getTarefasFinalizadas = () => {
@@ -31,13 +38,13 @@ import { reactive } from "vue";
   }
 
   const cadastraTarefa = () => {
-  const item = {
-    titulo: estado.tarefaTemp,
-    finalizada: false
+    const item = {
+      titulo: estado.tarefaTemp,
+      finalizada: false
+    }
+    estado.tarefas.push(item)
+    estado.tarefaTemp = ''
   }
-  estado.tarefas.push(item)
-  estado.tarefaTemp = ''
-}
 
 
   const getTarefasFiltradas = () => {
@@ -57,40 +64,12 @@ import { reactive } from "vue";
 </script>
 
 <template>
+  <div class="container">
+    <Cabecalho :tarefas-pendentes="getTarefasPendentes().length" />
+    <Formulario :trocar-filtro="evento => estado.filtro = evento.target.value" :cadastra-tarefa="cadastraTarefa" :tarefa-temp="estado.tarefaTemp" :edita-tarefa-temp="evento => estado.tarefaTemp = evento.target.value" />
+    <List :tarefas-filtradas="getTarefasFiltradas()"/>
+  </div>
   
-  <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-    <h1>Minhas Tarefas</h1>
-    <p>
-      Você possui {{ getTarefasPendentes().length }} tarefas pendentes
-    </p>
-  </header>
-  <form @submit.prevent="cadastraTarefa">
-    <div class="row">
-      <div class="col">
-        <input required v-model="estado.tarefaTemp" type="text" placeholder="Digite a descrição da tarefa" class="form-control"></input>
-      </div>
-      <div class="col-md-1">
-        <button type="submit" class="btn btn-primary">
-          Cadastrar
-        </button>
-      </div>
-      <div class="col-md-2 me-4">
-        <select @change="evento => estado.filtro = evento.target.value" class="form-control">
-          <option value="todas">Todas Tarefas</option>
-          <option value="finalizadas">Finalizadas</option>
-          <option value="pendentes">Pendentes</option>
-        </select>
-      </div>
-    </div>
-  </form>
-  <ul class="list-group mt-4">
-    <li class="list-group-item" v-for="tarefa in getTarefasFiltradas()">
-      <input @change="evento => tarefa.finalizada = evento.target.checked" :checked="tarefa.finalizada" :id="tarefa.titulo" type="checkbox">
-      <label :class="{done: tarefa.finalizada === true}" class="ms-3" :for="tarefa.titulo">
-        {{ tarefa.titulo }}
-      </label>
-    </li>
-  </ul>
 </template>
 
 <style scoped>
@@ -98,7 +77,6 @@ import { reactive } from "vue";
 .done{
   text-decoration: line-through;
 }
-
 
 
 </style>
